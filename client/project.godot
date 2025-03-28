@@ -15,6 +15,10 @@ run/main_scene="uid://c0bwynlb8ihi4"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+WebsocketClient="*res://autoload/websocket_client.gd"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/protobuf/plugin.cfg")
