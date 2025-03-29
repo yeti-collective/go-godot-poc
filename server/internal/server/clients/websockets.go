@@ -54,11 +54,21 @@ func (c *WebSocketClient) Initialize(id uint64) {
 
 	// Assign a specific logger to this particular client, so that all future logging within this client is tagged with this client id
 	c.logger.SetPrefix(fmt.Sprintf("Client %d: ", c.id))
+
+	// Send the server-side client id back to the client so that it can use it in the future
+	c.SocketSend(packets.NewId(c.id))
+	c.logger.Printf("Sent ID to client")
 }
 
 func (c *WebSocketClient) ProcessMessage(senderId uint64, message packets.Msg) {
-	c.logger.Printf("Received message: %T from client - echoing back...", message)
-	c.SocketSend(message)
+	if senderId == c.id {
+		// This message was sent by our own client, so broadcast it to everyone else
+		c.Broadcast(message)
+	} else {
+		// Another client interfacer passed this onto us, or it was broadcast from the hub,
+		// so forward it directly to our own client
+		c.SocketSendAs(message, senderId)
+	}
 }
 
 func (c *WebSocketClient) SocketSend(message packets.Msg) {
