@@ -15,3 +15,12 @@ offset_bottom = 472.0
 grow_horizontal = 2
 script = ExtResource("2_uu6xs")
 metadata/_custom_type_script = "uid://duy2kpxogly3y"
+
+[node name="LineEdit" type="LineEdit" parent="GUI"]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -81.0
+grow_horizontal = 2
+grow_vertical = 0
