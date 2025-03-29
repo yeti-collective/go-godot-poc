@@ -1,14 +1,15 @@
 extends Node2D
 
-
 const packets := preload("res://packets.gd")
+
+@onready var chat_log: ChatLog = $GUI/ChatLog
 
 func _ready() -> void:
 	WebsocketClient.connected_to_server.connect(_on_ws_connected_to_server)
 	WebsocketClient.connection_closed.connect(_on_ws_connection_closed)
 	WebsocketClient.packet_received.connect(_on_ws_packet_received)
 	
-	print("Connecting to server...")
+	chat_log.info("Connecting to server...")
 	WebsocketClient.connect_to_url("ws://127.0.0.1:8080/ws")
 
 func _on_ws_connected_to_server() -> void:
@@ -18,12 +19,12 @@ func _on_ws_connected_to_server() -> void:
 	
 	var err := WebsocketClient.send(packet)
 	if err:
-		print("Error sending packet")
+		chat_log.error("Error sending packet")
 	else:
-		print("Sent packet")
+		chat_log.success("Sent packet")
 	
 func _on_ws_connection_closed() -> void:
-	print("Connection closed")
+	chat_log.info("Connection closed")
 	
 func _on_ws_packet_received(packet: packets.Packet) -> void:
-	print("Received packet from the server: %s" % packet)
+	chat_log.info("Received packet from the server: %s" % packet)

@@ -1,5 +1,5 @@
 extends RichTextLabel
-class_name Log
+class_name ChatLog
 
 # This method (underscore means local / private by convention, even though private methods aren't really a thing in Godot)
 # will append the given text. BBCode is used to set the color for the text snippet to the given argument.
