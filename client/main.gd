@@ -2,8 +2,28 @@ extends Node2D
 
 const packets := preload("res://packets.gd")
 
-@onready var chat_log: ChatLog = $GUI/ChatLog
-@onready var line_input: LineEdit = $GUI/LineEdit
+@onready var chat_log: ChatLog = $GUI/VBoxContainer/ChatLog
+@onready var line_input: LineEdit = $GUI/VBoxContainer/LineEdit
+@onready var url_input: LineEdit = $GUI/VBoxContainer/HSplitContainer/URLInput
+@onready var conn_button: Button = $GUI/VBoxContainer/HSplitContainer/ConnectButton
+
+var connected := false:
+	set(val):
+		connected = val	
+		if conn_button != null:
+			conn_button.text = "DISCONNECT" if val else "CONNECT"
+			url_input.editable = !connected
+			line_input.editable = connected
+
+func attempt_connection(url: String):
+	chat_log.info("Connecting to server...")
+	WebsocketClient.connect_to_url("wss://%s/ws" % url)
+
+func close_connection():
+	WebsocketClient.close()
+	WebsocketClient.clear()
+	connected = false 
+
 
 func _ready() -> void:
 	# Connect the websocket client to our packet handling methods
@@ -14,14 +34,14 @@ func _ready() -> void:
 	# Connect the line input
 	line_input.text_submitted.connect(_on_line_edit_text_submitted)
 	
-	chat_log.info("Connecting to server...")
-	WebsocketClient.connect_to_url("ws://127.0.0.1:8080/ws")
 
 func _on_ws_connected_to_server() -> void:
 	chat_log.success("Connected to server!")
+	connected = true
 	
 func _on_ws_connection_closed() -> void:
 	chat_log.info("Connection closed")
+	connected = false
 	
 func _on_ws_packet_received(packet: packets.Packet) -> void:
 	var sender_id := packet.get_sender_id()
@@ -58,3 +78,16 @@ func _on_line_edit_text_submitted(text: String) -> void:
 	
 	# Clear the input field
 	line_input.text = ""
+
+## URL Field functions
+
+func _on_connect_button_pressed() -> void:
+	if connected:
+		close_connection()
+	else:
+		if url_input.text.length() < 0:
+			return
+		attempt_connection(url_input.text)
+
+func _on_url_input_text_submitted(_new_text:String) -> void:
+	_on_connect_button_pressed()
