@@ -19,6 +19,11 @@ config/icon="res://icon.svg"
 
 WebsocketClient="*res://autoload/websocket_client.gd"
 
+[display]
+
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep_height"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/protobuf/plugin.cfg")
